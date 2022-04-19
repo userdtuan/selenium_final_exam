@@ -17,7 +17,16 @@ import java.util.Random;
 public class BaseTests {
     public static WebDriver driver;
     public static Random random = new Random();
+    public String catchAlert(){
+        String alert = "";
+        try{
+            alert=", Alert: "+driver.switchTo().alert().getText();
+            driver.switchTo().alert().accept();
+        } catch (Exception e) {
+        }
 
+        return alert;
+    }
     public void testcase_login(String user, String pass) {
         login(user, pass);
         boolean login_result = true;
@@ -191,9 +200,119 @@ public class BaseTests {
         System.out.println(success + "\t : testcase Desposit, Alert: "+alertMessage);
 
     }
-//    public void deposit(){
-//
-//    }
+    public void testcase_withdrawal(int accountID, int amount, String description) throws InterruptedException {
+        WebElement depositBtn = null;
+        Boolean success = true;
+        try {
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[9]/a"));
+        } catch (Exception e) {
+            login("mngr399176", "mugyten");
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[9]/a"));
+        }
+        depositBtn.click();
+        WebElement accID = driver.findElement(By.name("accountno"));
+        WebElement amountt = driver.findElement(By.name("ammount"));
+        WebElement descrt = driver.findElement(By.name("desc"));
+        accID.sendKeys(String.valueOf(accountID));
+        amountt.sendKeys(String.valueOf(amount));
+        descrt.sendKeys(description);
+        driver.findElement(By.name("AccSubmit")).click();
+//        WebElement check = driver.findElement(By.xpath("/html/body/table/tbody/tr/td/table/tbody/tr[1]/td/p"));
+//        System.out.println(check.getAttribute("innerHTML"));
+//        Alert alert = driver.switchTo().alert();
+        String alertMessage= "";
+        try{
+            alertMessage= driver.switchTo().alert().getText();
+            driver.switchTo().alert().accept();
+        } catch (Exception e) {
+        }
+        // Displaying alert message
+//        System.out.println(alertMessage);
+        if(alertMessage.equals("Account does not exist")){
+            success=false;
+        }
+        System.out.println(success + "\t : testcase Withdrawal, Alert: "+alertMessage);
+
+    }
+    public void testcase_fundTransfer(int payers_account, int payee_account, int amount, String description) {
+        WebElement depositBtn = null;
+        Boolean success = true;
+        try {
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[10]/a"));
+        } catch (Exception e) {
+            login("mngr399176", "mugyten");
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[10]/a"));
+        }
+        depositBtn.click();
+        WebElement payersaccount = driver.findElement(By.name("payersaccount"));
+        WebElement payeeaccount = driver.findElement(By.name("payeeaccount"));
+        WebElement ammount = driver.findElement(By.name("ammount"));
+        WebElement descrt = driver.findElement(By.name("desc"));
+        payersaccount.sendKeys(String.valueOf(payers_account));
+        payeeaccount.sendKeys(String.valueOf(payee_account));
+        ammount.sendKeys(String.valueOf(amount));
+        descrt.sendKeys(description);
+        driver.findElement(By.name("AccSubmit")).click();
+        String alertMessage= catchAlert();
+        if(alertMessage!=""){
+            success=false;
+        }
+        // Displaying alert message
+//        System.out.println(alertMessage);
+        System.out.println(success + "\t : testcase FundTransfer"+alertMessage);
+
+    }
+    public void testcase_customizeStatement(int accountno, String fdate, String tdate, int amountlowerlimit, int numtransaction) {
+        WebElement depositBtn = null;
+        Boolean success = true;
+        try {
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[14]/a"));
+        } catch (Exception e) {
+            login("mngr399176", "mugyten");
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[14]/a"));
+        }
+        depositBtn.click();
+        WebElement welm_accountno = driver.findElement(By.name("accountno"));
+        WebElement welm_fdate = driver.findElement(By.name("fdate"));
+        WebElement welm_tdate = driver.findElement(By.name("tdate"));
+        WebElement welm_amountlowerlimit = driver.findElement(By.name("amountlowerlimit"));
+        WebElement welm_numtransaction = driver.findElement(By.name("numtransaction"));
+        welm_accountno.sendKeys(String.valueOf(accountno));
+        welm_fdate.sendKeys(fdate);
+        welm_tdate.sendKeys(tdate);
+        welm_amountlowerlimit.sendKeys(String.valueOf(amountlowerlimit));
+        welm_numtransaction.sendKeys(String.valueOf(numtransaction));
+
+        driver.findElement(By.name("AccSubmit")).click();
+        String alertMessage= catchAlert();
+        if(alertMessage!=""){
+            success=false;
+        }
+        System.out.println(success + "\t : testcase CustomizeStatement, Alert: "+alertMessage);
+
+    }
+    public void testcase_logout() {
+        Boolean success = true;
+        WebElement depositBtn = null;
+        try {
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[15]/a"));
+        } catch (Exception e) {
+            login("mngr399176", "mugyten");
+            depositBtn = driver.findElement(By.xpath("/html/body/div[3]/div/ul/li[15]/a"));
+        }
+        depositBtn.click();
+//        You Have Succesfully Logged Out!!
+        String alertMessage= catchAlert();
+        if(alertMessage.contains("Succesfully Logged Out")){
+
+        }
+        else {
+            success = false;
+        }
+        // Displaying alert message
+//        System.out.println(alertMessage);
+        System.out.println(success + "\t : testcase Logout"+alertMessage);
+    }
     public void quit(){
         driver.quit();
 
@@ -208,19 +327,22 @@ public class BaseTests {
         System.out.println("------------------");
         test.testcase_newCustomer("name", "female", "06/09/2001", "PhuLoc", "Hue", "Vietname", "111111", "0129238123", "oalllss6@p00o.com", "123qwe!@#");
         test.testcase_newCustomer("name", "female", "06/09/2001", "PhuLoc", "Hue", "Vietname", "111111", "0129238123", "e"+String.valueOf(random.nextInt(999))+"@gmail.com", "123qwe!@#");
-        test.testcase_newCustomer("name", "female", "06/09/2001", "PhuLoc", "Hue", "Vietname", "111111", "0129238123", "ppooo@p00o.com", "123qwe!@#");
-        test.testcase_newCustomer("name", "female", "06/09/2001", "PhuLoc", "Hue", "Vietname", "111111", "0129238123", "oalllss6@p00o.com", "123qwe!@#");
-        test.testcase_newCustomer("name", "female", "06/09/2001", "PhuLoc", "Hue", "Vietname", "111111", "0129238123", "e"+String.valueOf(random.nextInt(9999))+"@gmail.com", "123qwe!@#");
-        System.out.println("------------------");
         test.testcase_newAccount("Current", 5000);
         test.testcase_newAccount("Savings", 5000);
-        test.testcase_newAccount("Savings", 5000);
-        test.testcase_newAccount("Current", 5000);
         System.out.println("------------------");
         test.testcase_deposit(3,1212,"assasa");
         test.testcase_deposit(4,1212,"mkmk");
-        test.testcase_deposit(5,1212,"ppppp");
-
+        System.out.println("------------------");
+        test.testcase_withdrawal(3,1212,"assasa");
+        test.testcase_withdrawal(5,1212,"ppppp");
+        System.out.println("------------------");
+        test.testcase_fundTransfer(2,3,1212,"assasa");
+        test.testcase_fundTransfer(5,4,1212,"mkmk");
+        System.out.println("------------------");
+        test.testcase_customizeStatement(2,"01/12/2020","01/12/2022",1000, 21);
+        test.testcase_customizeStatement(5,"01/12/2020","01/12/2020",9000, 40);
+        System.out.println("------------------");
+        test.testcase_logout();
 
         System.out.println("Done");
         Thread.sleep(5000);
