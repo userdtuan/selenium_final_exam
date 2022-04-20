@@ -90,8 +90,10 @@ public class B6Alert {
         B6Alert test = new B6Alert();
         test.setUp();
         test.alertWithOK();
+        System.out.println("------------------");
         test.alertWithOKAndCancel("ok");
         test.alertWithOKAndCancel("cancel");
+        System.out.println("------------------");
         test.alertWithTextBox("ThanhTuan");
         System.out.println("done");
         driver.quit();
